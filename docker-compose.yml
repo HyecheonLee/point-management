@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  mariadb:
+    container_name: mariadb_point
+    image: mariadb:latest
+    privileged: true
+    volumes:
+      - ./data/docker/mariadb:/var/lib/mysql
+    environment:
+      TZ: "Asia/Seoul"
+      MYSQL_ROOT_PASSWORD: "point"
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: "point"
+      MYSQL_USER: "point"
+      MYSQL_PASSWORD: "point"
+    ports:
+      - "3306:3306"
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
