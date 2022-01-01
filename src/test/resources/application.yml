@@ -1,0 +1,15 @@
+spring:
+  batch:
+    job:
+      names: ${job.name:None}
+    jdbc:
+      initialize-schema: always
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      tracing:
+        include-parameter-values: true
