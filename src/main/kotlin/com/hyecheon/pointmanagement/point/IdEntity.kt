@@ -14,5 +14,4 @@ abstract class IdEntity {
 	@Column(insertable = true, updatable = false)
 	var id: Long? = null
 
-
 }

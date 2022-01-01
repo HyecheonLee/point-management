@@ -28,10 +28,10 @@ data class Point(
 	var expireDate: LocalDate,
 
 	@Column(nullable = false, name = "is_used")
-	var used: Boolean,
+	var used: Boolean = false,
 
 	@Column(nullable = false, name = "is_expired")
-	var expired: Boolean
+	var expired: Boolean = false
 ) : IdEntity() {
 
 	fun expire() = run {
