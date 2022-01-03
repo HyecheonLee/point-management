@@ -38,12 +38,12 @@ class ExpirePointJobConfigurationTest : BatchTestSupport() {
 		pointRepository.save(Point(pointWallet, BigInteger.valueOf(1000), earnDate, expireDate))
 
 		//when
-		val jobParameters = JobParametersBuilder().addString("today", "2022-01-04")
-			.toJobParameters()
-		val execution = launchJob(expirePointJob, jobParameters)
+		val jobParameters = JobParametersBuilder()
+			.addString("today", "2022-01-04").toJobParameters()
+		val jobExecution = launchJob(expirePointJob, jobParameters)
 
 		//then
-		then(execution.exitStatus).isEqualTo(ExitStatus.COMPLETED)
+		then(jobExecution.exitStatus).isEqualTo(ExitStatus.COMPLETED)
 
 		val points = pointRepository.findAll()
 		then(points.stream().filter { it.expired }).hasSize(3)
