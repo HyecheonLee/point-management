@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "2.6.2"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.6.10"
+	kotlin("kapt") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
 	kotlin("plugin.jpa") version "1.6.10"
 }
@@ -29,9 +30,9 @@ dependencies {
 	//query dsl
 	implementation("com.querydsl:querydsl-jpa")
 	implementation("com.querydsl:querydsl-core")
-	annotationProcessor(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
-	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
-	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+	kapt(group = "com.querydsl", name = "querydsl-apt", classifier = "jpa")
+	kapt("jakarta.persistence:jakarta.persistence-api")
+	kapt("jakarta.annotation:jakarta.annotation-api")
 
 	//logger
 	implementation("io.github.microutils:kotlin-logging-jvm:2.1.20")

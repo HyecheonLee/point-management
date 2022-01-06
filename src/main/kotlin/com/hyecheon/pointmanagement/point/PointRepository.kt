@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
  * Email: rainbow880616@gmail.com
  * Date: 2022/01/01
  */
-interface PointRepository : JpaRepository<Point, Long> {
+interface PointRepository : JpaRepository<Point, Long>, PointCustomRepository {
+
+
 }
