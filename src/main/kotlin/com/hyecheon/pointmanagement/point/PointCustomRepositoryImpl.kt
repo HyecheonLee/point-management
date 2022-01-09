@@ -30,4 +30,25 @@ class PointCustomRepositoryImpl : QuerydslRepositorySupport(Point::class.java), 
 			elementCount
 		)
 	}
+
+	override fun sumBeforeCriteriaDate(alarmCriteriaDate: LocalDate, pageable: Pageable): Page<ExpiredPointSummary> {
+		val query = from(QPoint.point)
+			.select(
+				QExpiredPointSummary(
+					QPoint.point.pointWallet.userId,
+					QPoint.point.amount.sum().coalesce(BigInteger.ZERO)
+				)
+			)
+			.where(QPoint.point.expired.eq(false))
+			.where(QPoint.point.used.eq(false))
+			.where(QPoint.point.expireDate.lt(alarmCriteriaDate))
+			.groupBy(QPoint.point.pointWallet)
+		val expiredPointSummaryList = querydsl?.applyPagination(pageable, query)?.fetch() ?: emptyList()
+		val totalElement = query.fetchCount()
+		return PageImpl(
+			expiredPointSummaryList,
+			PageRequest.of(pageable.pageNumber, pageable.pageSize),
+			totalElement
+		)
+	}
 }

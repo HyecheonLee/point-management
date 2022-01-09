@@ -11,4 +11,7 @@ import java.time.LocalDate
  */
 interface PointCustomRepository {
 	fun sumByExpiredDate(alarmCriteriaDate: LocalDate, pageable: Pageable): Page<ExpiredPointSummary>
+
+	fun sumBeforeCriteriaDate(alarmCriteriaDate: LocalDate, pageable: Pageable): Page<ExpiredPointSummary>
+
 }

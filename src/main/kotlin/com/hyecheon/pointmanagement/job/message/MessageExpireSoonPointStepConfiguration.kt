@@ -1,9 +1,9 @@
 package com.hyecheon.pointmanagement.job.message
 
-import com.hyecheon.pointmanagement.job.listener.InputExpiredPointAlarmCriteriaDateStepListener
 import com.hyecheon.pointmanagement.message.Message
 import com.hyecheon.pointmanagement.point.ExpiredPointSummary
 import com.hyecheon.pointmanagement.point.PointRepository
+import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.configuration.annotation.JobScope
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepScope
@@ -22,43 +22,43 @@ import javax.persistence.EntityManagerFactory
 /**
  * User: hyecheon lee
  * Email: rainbow880616@gmail.com
- * Date: 2022/01/06
+ * Date: 2022/01/09
  */
 @Configuration
-class MessageExpiredPointStepConfiguration {
+class MessageExpireSoonPointStepConfiguration {
 
-	@Bean
 	@JobScope
-	fun messageExpiredPointStep(
+	@Bean
+	fun messageExpireSoonPointStep(
 		stepBuilderFactory: StepBuilderFactory,
 		platformTransactionManager: PlatformTransactionManager,
-		listener: InputExpiredPointAlarmCriteriaDateStepListener,
-		messageExpiredPointItemReader: RepositoryItemReader<ExpiredPointSummary>,
-		messageExpiredPointProcessor: ItemProcessor<ExpiredPointSummary, Message>,
-		messageExpiredWriter: JpaItemWriter<Message>
+		inputExpireSoonPointAlarmCriteriaDateStepListener: StepExecutionListener,
+		messageExpireSoonPointItemReader: RepositoryItemReader<ExpiredPointSummary>,
+		messageExpireSoonPointItemProcessor: ItemProcessor<ExpiredPointSummary, Message>,
+		messageExpireSoonPointItemWriter: JpaItemWriter<Message>
 	) = run {
-		stepBuilderFactory["messageExpiredPointStep"]
+		stepBuilderFactory["messageExpireSoonPointStep"]
 			.allowStartIfComplete(true)
 			.transactionManager(platformTransactionManager)
-			.listener(listener)
+			.listener(inputExpireSoonPointAlarmCriteriaDateStepListener)
 			.chunk<ExpiredPointSummary, Message>(1000)
-			.reader(messageExpiredPointItemReader)
-			.processor(messageExpiredPointProcessor)
-			.writer(messageExpiredWriter)
+			.reader(messageExpireSoonPointItemReader)
+			.processor(messageExpireSoonPointItemProcessor)
+			.writer(messageExpireSoonPointItemWriter)
 			.build()
 	}
 
 	@Bean
 	@StepScope
-	fun messageExpiredPointItemReader(
+	fun messageExpireSoonPointItemReader(
 		pointRepository: PointRepository,
-		@Value("#{T(java.time.LocalDate).parse(stepExecutionContext[alarmCriteriaDate])}")
+		@Value("#{T(java.time.LocalDate).parse(jobParameters[alarmCriteriaDate])}")
 		alarmCriteriaDate: LocalDate
 	) = run {
 		RepositoryItemReaderBuilder<ExpiredPointSummary>()
-			.name("messageExpiredPointItemReader")
+			.name("messageExpireSoonPointItemReader")
 			.repository(pointRepository)
-			.methodName("sumByExpiredDate")
+			.methodName("sumBeforeCriteriaDate")
 			.pageSize(1000)
 			.arguments(alarmCriteriaDate)
 			.sorts(mapOf("pointWallet" to Sort.Direction.ASC))
@@ -67,18 +67,18 @@ class MessageExpiredPointStepConfiguration {
 
 	@Bean
 	@StepScope
-	fun messageExpiredPointItemProcessor(
+	fun messageExpireSoonPointItemProcessor(
 		@Value("#{T(java.time.LocalDate).parse(jobParameters[today])}")
 		today: LocalDate
 	) = run {
 		ItemProcessor<ExpiredPointSummary, Message> {
-			Message.expiredPointMessage(it.userId, today, it.amount)
+			Message.expireSoonPointMessage(it.userId, today, it.amount)
 		}
 	}
 
 	@Bean
 	@StepScope
-	fun messageExpiredPointItemWriter(
+	fun messageExpireSoonPointItemWriter(
 		entityManagerFactory: EntityManagerFactory
 	) = run {
 		val jpaItemWriter = JpaItemWriter<Message>()

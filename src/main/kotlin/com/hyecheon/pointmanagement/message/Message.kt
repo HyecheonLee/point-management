@@ -29,10 +29,17 @@ data class Message(
 
 	) : IdEntity() {
 	companion object {
-		fun of(userId: String, expiredDate: LocalDate, expiredAmount: BigInteger) = run {
+		fun expiredPointMessage(userId: String, expiredDate: LocalDate, expiredAmount: BigInteger) = run {
 			Message(
 				userId, "$expiredAmount 포인트 만료",
 				"${expiredDate.format(DateTimeFormatter.ISO_DATE)} 기준 $expiredAmount 포인트가 만료되었습니다."
+			)
+		}
+
+		fun expireSoonPointMessage(userId: String, expiredDate: LocalDate, expiredAmount: BigInteger) = run {
+			Message(
+				userId, "$expiredAmount 포인트 만료 예정",
+				"${expiredDate.format(DateTimeFormatter.ISO_DATE)} 까지 $expiredAmount 포인트가 만료 예정입니다."
 			)
 		}
 	}
